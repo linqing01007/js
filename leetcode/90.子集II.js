@@ -1,19 +1,30 @@
-给定一个可能包含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+// 给定一个可能包含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
 
-说明：解集不能包含重复的子集。
+// 说明：解集不能包含重复的子集。
 
-示例:
+// 示例:
 
-输入: [1,2,2]
-输出:
-[
-  [2],
-  [1],
-  [1,2,2],
-  [2,2],
-  [1,2],
-  []
-]
+// 输入: [1,2,2]
+// 输出:
+// [
+//   [2],
+//   [1],
+//   [1,2,2],
+//   [2,2],
+//   [1,2],
+//   []
+// ]
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * @param {number[]} nums
@@ -48,3 +59,32 @@ var subsetsWithDup = function(nums) {
 	}
 	return ans;
 }
+
+
+
+
+const subsetsWithDupII = function(nums) {
+  const dfs = function (nums, start, num, sub, res, usedNum) {
+    console.log(nums, start, num, sub)
+    if (sub.length === num) {
+      res.push(sub.slice())
+      return
+    }
+    for (let i = start; i < nums.length; i++) {
+      if (usedNum.includes(nums[i])) continue
+      sub.push(nums[i])
+      dfs(nums, i + 1, num, sub, res, usedNum)
+      sub.pop()
+      usedNum.push(nums[i])
+    }
+    usedNum.splice(0, usedNum.length)
+  }
+  const res = []
+  for (let i = 1; i <= nums.length; i++) {
+    dfs(nums, 0, i, [], res, [])
+  }
+  res.push([])
+  return res
+}
+const i = [2, 2, 1, 3, 3]
+console.log(subsetsWithDupII(i))
