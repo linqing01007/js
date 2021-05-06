@@ -79,12 +79,4 @@ var splitIntoFibonacci = function(S) {
 };
 
 const i = "112358130"
-// console.log(splitIntoFibonacci(i))
-const test = function (...e) {
-  [...e].map(item => {
-    console.log(item)
-  })
-  console.log([...e])
-}
-const j = [1, 2, 3, 4]
-test(j)
+console.log(splitIntoFibonacci(i))

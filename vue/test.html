@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="test vue" />
+    <meta charset="utf-8" />
+    <title>test vue</title>
+  </head>
+  <body>
+    <div></div>
+  </body>
+  <script>
+    const xhr = new XMLHttpRequest()
+    xhr.open('GET', 'http://baidu.com', true)
+    xhr.send()
+    setTimeout(() => xhr.abort(), 200)
+    console.log(xhr.response)
+  </script>
+</html>
