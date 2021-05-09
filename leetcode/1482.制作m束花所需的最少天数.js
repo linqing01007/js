@@ -54,3 +54,49 @@
 // 来源：力扣（LeetCode）
 // 链接：https://leetcode-cn.com/problems/minimum-number-of-days-to-make-m-bouquets
 // 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+/**
+ * @param {number[]} bloomDay
+ * @param {number} m
+ * @param {number} k
+ * @return {number}
+ */
+var minDays = function(bloomDay, m, k) {
+  // 二分法
+  if (bloomDay.length < m * k) return -1
+  let left = Math.min(...bloomDay), right = Math.max(...bloomDay)
+  const canMake = function (day, m, k) {
+    let bloomFlower = bloomDay.map(d => {
+      return d <= day ? 1 : 0
+    })
+    let count = 0
+    for (let i = 0; i < bloomDay.length; i++) {
+      let j = 0
+      while (bloomDay[i] <= day && j < k) {
+        j++
+        i++
+      }
+      // [1, 2, 1, 1, 1]
+      // j=1,i=1
+      // j=2,i=2
+      if (j == k) {
+        count++
+        i--
+      }
+    }
+    if (count >= m) return true
+    return false
+  }
+  while (left <= right) {
+    let mid = (left + right) >> 1
+    // console.log(mid, canMake(mid, m, k))
+    if (canMake(mid, m, k)) {
+      right = mid - 1
+    } else {
+      left = mid + 1
+    }
+  }
+  return left
+};
+const days = [1,10,2,9,3,8,4,7,5,6], m = 4, k = 2
+console.log(minDays(days, m, k))
