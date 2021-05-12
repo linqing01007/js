@@ -54,18 +54,86 @@ const myAssign = function (target, ...src) {
   }
   return target
 }
-let symbol = Symbol(1)
-const a = {
-  q: 1,
-  [symbol]: 2
+// let symbol = Symbol(1)
+// const a = {
+//   q: 1,
+//   [symbol]: 2
+// }
+// Reflect.defineProperty(a, 'w', {
+//   value: 1,
+//   writable: true,
+//   enumerable: true,
+//   configurable: true
+// })
+// // console.log(Reflect.ownKeys(a), Object.keys(a), Object.getOwnPropertyNames(a))
+// console.log(myAssign({}, a))
+
+
+// 4.实现bind方法
+// 改变函数内this的指向，并且传入参数，返回一个绑定后的函数
+// 如果对返回函数用new调用，不会改变里面的this指向（指向new的对象）
+const myBind = function (oThis, ...args) {
+  if (typeof this != "function") {
+    throw Error('bind error, bind must be call by function')
+  }
+  let restArgs = args
+  let fToBind = this, func = function () {}
+  let fBound = function (...args) {
+    return fToBind.apply(this instanceof func ? this : oThis || window, restArgs.concat(args))
+  }
+  func.prototype = this.prototype
+  fBound.prototype = new func()
+  return fBound
 }
-Reflect.defineProperty(a, 'w', {
-  value: 1,
+
+
+// 5.实现call方法
+// 用指定的this值和参数来调用函数
+const myCall = function (oThis, ...args) {
+  // 如果第一个参数是null/undefined，则内部this指向全局对象
+  // 第一个参数为基本数据类型则要转换为对象
+  oThis =  oThis ? Object(oThis) : window
+  let key = Symbol('this')
+  oThis[key] = this
+  let res = oThis[key](...args)
+  Reflect.deleteProperty(oThis, key)
+  return res
+}
+Reflect.defineProperty(Function.prototype, 'myCall', {
+  value: myCall,
   writable: true,
-  enumerable: true,
-  configurable: true
+  enumerable: false,
+  configurable: false
 })
-// console.log(Reflect.ownKeys(a), Object.keys(a), Object.getOwnPropertyNames(a))
-console.log(myAssign({}, a))
+// const o = {
+//   add: function () {
+//     return this.a + this.b + 10
+//   },
+//   a: 1,
+//   b: 20
+// }
+// function add () {
+//   console.log(this.a)
+//   console.log(this.a + this.b + 1)
+// }
+// console.log(add.myCall(1))
 
 
+// 6.函数柯里化
+// 将一个多参数的函数转化为多个嵌套的单参数函数
+const curry = function (targetFn) {
+  return function curried (...args) {
+    if (args.length >= targetFn.length) {
+      return targetFn.apply(null, args)
+    } else {
+      return function (...args2) {
+        return curried.apply(null, args.concat(args2))
+      }
+    }
+  }
+}
+// const sum = function (a, b, c) {
+//   return a + b + c
+// }
+// let sumCurry = curry(sum)
+// console.log(sumCurry(1), sumCurry(10)(2), sumCurry(2)(3)(4))
