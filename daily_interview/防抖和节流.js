@@ -4,13 +4,50 @@
 
 
 // 简单的防抖
-const debounce = function (fn, wait) {
+const debounce = function (fn, wait = 0, options = {
+  leading: true,
+  context: null
+}) {
   let timer = null
-  return function (...args) {
-    if (timer) clearTimeout(timer)
-    timer = setTimeout(() => {
-      fn.call(fn, ...args)
-    }, wait)
+  let res
+  const _debounce = function (...args) {
+    options.context || (options.context = this)
+    if (timer) {
+      clearTimeout(timer)
+    }
+    if (options.leading && !timer) {
+      // timer占位，避免一直执行这里
+      timer = setTimeout(() => {
+        timer = null
+      }, wait)
+      fn.apply(options.context, args)
+    } else {
+      timer = setTimeout(() => {
+        fn.apply(options.context, args)
+        timer = null
+      }, wait)
+    }
+  }
+  _debounce.cancle = function (reason = '') {
+    clearTimeout(timer)
+    timer = null
+  }
+  return _debounce
+}
+
+const testFn = function (m) {
+  let res = 0
+  for (let i = 0; i < 555 * m; i++) {
+    res ^= i
+  }
+  console.log('>>>>>>>>', res)
+  return res
+}
+let fn = debounce(testFn, 1, {leading: true})
+for (let i = 1; i < 10; i++) {
+  fn(i)
+  if (i > 7) {
+    fn.cancle()
   }
 }
 
