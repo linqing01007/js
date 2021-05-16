@@ -30,70 +30,42 @@
 /**
  * Initialize your data structure here.
  */
-var TrieNode = /** @class */ (function () {
-    function TrieNode() {
-        this.R = 26;
-        this.end = false;
-        this.links = Array(this.R);
-    }
-    TrieNode.prototype.containKey = function (char) {
-        var index = char.charCodeAt(0) - 'a'.charCodeAt(0);
-        return this.links[index];
-    };
-    TrieNode.prototype.get = function (char) {
-        var index = char.charCodeAt(0) - 'a'.charCodeAt(0);
-        return this.links[index];
-    };
-    TrieNode.prototype.put = function (char, node) {
-        var index = char.charCodeAt(0) - 'a'.charCodeAt(0);
-        this.links[index] = node;
-    };
-    TrieNode.prototype.setEnd = function () {
-        this.end = true;
-    };
-    TrieNode.prototype.isEnd = function () {
-        return this.end;
-    };
-    return TrieNode;
-}());
-var Trie = /** @class */ (function () {
-    function Trie() {
-        this.root = new TrieNode();
-    }
-    Trie.prototype.insert = function (word) {
-        var node = this.root;
-        for (var i = 0; i < word.length; i++) {
-            var currentChar = word[i];
-            if (!node.containKey(currentChar)) {
-                node.put(currentChar, new TrieNode());
-            }
-            node = node.get(currentChar);
+
+
+var Trie = function () {
+    this.children = {}
+}
+
+Trie.prototype.insert = function (word) {
+    let node = this.children
+    for (const c of word) {
+        if (!Reflect.has(node, c)) {
+            node[c] = {}
         }
-        node.setEnd();
-    };
-    Trie.prototype.searchPrefix = function (word) {
-        var node = this.root;
-        for (var i = 0; i < word.length; i++) {
-            var currentChar = word[i];
-            if (node.containKey(currentChar)) {
-                node = node.get(currentChar);
-            }
-            else {
-                return null;
-            }
+        node = node[c]
+    }
+    node.isEnd = true
+}
+
+Trie.prototype.searchPrefix = function (prefix) {
+    let node = this.children
+    for (const c of prefix) {
+        if (!Reflect.has(c)) {
+            return false
         }
-        return node;
-    };
-    Trie.prototype.search = function (word) {
-        var node = this.searchPrefix(word);
-        return node && node.isEnd();
-    };
-    Trie.prototype.startsWith = function (prefix) {
-        var node = this.searchPrefix(prefix);
-        return Boolean(node);
-    };
-    return Trie;
-}());
+        node = node[c]
+    }
+    return node
+}
+
+Trie.prototype.search = function (word) {
+    const node = this.searchPrefix(word)
+    return node && node.isEnd
+}
+
+Trie.prototype.startsWith = function (prefix) {
+    return this.searchPrefix(prefix)
+}
 /**
  * Inserts a word into the trie.
  * @param {string} word
