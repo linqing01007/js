@@ -8,11 +8,10 @@
 // 判断元素是否在可视区域
 const isInViewPortOne = function (el) {
   // 方法一：利用offsetTop,scrollTop进行计算
-  const viewPortHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight // 获取窗口高度
-  const offsetTop = el.offsetTop
+  const viewPortHeight = window.innerHeight || document.documentElement.clientHeight || document.clientHeight
   const scrollTop = document.documentElement.scrollTop
-  const top = offsetTop - scrollTop
-  return top <= viewPortHeight
+  const offsetTop = el.offsetTop
+  return (offsetTop - scrollTop) <= viewPortHeight
 }
 
 const isInViewPortTwo = function (el) {
@@ -37,3 +36,15 @@ const isInViewPortTwo = function (el) {
     bottom <= viewHeight
   )
 }
+
+
+
+
+
+
+
+// const viewPortHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight // 获取窗口高度
+//   const offsetTop = el.offsetTop
+//   const scrollTop = document.documentElement.scrollTop
+//   const top = offsetTop - scrollTop
+//   return top <= viewPortHeight

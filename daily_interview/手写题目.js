@@ -137,3 +137,105 @@ const curry = function (targetFn) {
 // }
 // let sumCurry = curry(sum)
 // console.log(sumCurry(1), sumCurry(10)(2), sumCurry(2)(3)(4))
+
+// 事件发布订阅模式
+class EventBus {
+  constructor () {
+    Reflect.defineProperty(this, 'handles', {
+      value: {},
+      enumerable: true,
+      configurable: true,
+      writable: true
+    })
+  }
+  on (eventName, listener) {
+    if (typeof listener != 'function') {
+      throw Error('callback must be a function')
+    }
+    if (!this.handles[eventName]) {
+      this.handles[eventName] = []
+    }
+    this.handles[eventName].push(listener)
+  }
+  emit (eventName, ...args) {
+    let listeners = this.handles[eventName]
+    if (!listeners) {
+      console.log(`${eventName}事件不存在`)
+      return
+    }
+    for (let listener of listeners) {
+      listener(...args)
+    }
+  }
+  off (eventName, listener = null) {
+    if (!listener) {
+      let res = Reflect.deleteProperty(this.handles, eventName)
+      return res
+    }
+    let listeners = this.handles[eventName]
+    if (listeners && listeners.length) {
+      let index = listeners.findIndex(item => item === listener)
+      listeners.splice(index, 1)
+    }
+  }
+  once (eventName, listener) {
+    if (typeof listener != 'function') {
+      throw Error('callback must be a function')
+    }
+    let handle = (...args) => {
+      listener(...args)
+      this.off(eventName, handle)
+    }
+    this.on(eventName, handle)
+  }
+}
+
+// const Bus = new EventBus()
+// const a = () => {
+//   console.log('aaaaaa')
+// }
+// const b = () => {
+//   console.log('bbbbbbbbb')
+// }
+// const c = () => {
+//   console.log('ccccccccc')
+// }
+// const d = () => {
+//   console.log('ddddddddd')
+// }
+// Bus.on('log', a)
+// Bus.on('log', b)
+// Bus.once('once', c)
+// Bus.emit('log')
+// Bus.emit('log')
+// Bus.emit('once')
+// Bus.emit('once')
+// console.log(Bus.handles)
+
+
+// 简单的深拷贝
+const deepCopy = function (source) {
+  // 只拷贝可枚举的自有属性
+  if (!source || typeof source != 'object') {
+    return source
+  }
+  let res = Array.isArray(source) ? [] : {}
+  for (let key in source) {
+    if (source.hasOwnProperty(key)) {
+      res[key] = deepCopy(source[key])
+    }
+  }
+}
+
+
+// 实现Object.is()
+// Object.is(0, -0) false
+// Object.is(NaN, NaN) true
+const myIs = function (x, y) {
+  if (x === y) {
+    return x !== 0 || 1 / x === 1 / y
+  } else {
+    return x !== x && y !== y
+  }
+}
+

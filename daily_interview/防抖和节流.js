@@ -5,7 +5,7 @@
 
 // 简单的防抖
 const debounce = function (fn, wait = 0, options = {
-  leading: true,
+  leading: true, // 表示第一次立即触发
   context: null
 }) {
   let timer = null
@@ -52,7 +52,7 @@ for (let i = 1; i < 10; i++) {
 }
 
 // 简单的节流
-const throttle = function (fn, wait) {
+const throttle = function (fn, wait = 0) {
   let timer
   return function (...args) {
     if (timer) return
@@ -62,3 +62,4 @@ const throttle = function (fn, wait) {
     }, wait);
   }
 }
+
